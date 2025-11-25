@@ -203,7 +203,7 @@ gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase,
                      date_atteinte = if (!is.na(idx)) date[idx] else as.Date(NA),
                      gdd_atteint = if (!is.na(idx)) gdd[idx] else NA_real_,
                      .groups = "drop") |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee, nb_gdd_90)
+    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee, gdd_atteint)
   return(gdd_90)
 }
 
