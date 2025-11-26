@@ -1,9 +1,9 @@
 Package: DataBIO
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9001
+Title: Valorisation Des Données Agricoles
+Version: 0.1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Zachary", "Bélisle", , "zachary.belisle@irda.qc.ca", role = c("aut", "cre"))
+Description: Collection de fonctions servants aux analyses du programme de recherche DataBIO.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
