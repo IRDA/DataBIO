@@ -21,7 +21,7 @@
 #' @export
 #'
 #' @examples
-calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_semi = date_semi, date_recolte = date_recolte){
+calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_semi = date_semi, date_recolte = date_recolte) {
   # 7 jours pré-semis
   calendrier_7j_presemis <- data |>
     dplyr::select(any_of(c({{ id_col }}, {{ date_semi }}, nochamp, annee))) |>
@@ -37,14 +37,16 @@ calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_
 
   # 14 jours post-semis
   calendrier_14j <- data |>
-    dplyr::select(any_of(c{{id_col}}, {{date_semi}}, nochamp, annee))) |>
-    dplyr::mutate(date_semi = as.Date({{date_semi}}),
-                  date = purrr::map2(date_semi, date_semi + 14, ~ seq(.x, .y, by = "day"))) |>
+    dplyr::select(any_of(c({{ id_col }}, {{ date_semi }}, nochamp, annee))) |>
+    dplyr::mutate(
+      date_semi = as.Date({{ date_semi }}),
+      date = purrr::map2(date_semi, date_semi + 14, ~ seq(.x, .y, by = "day"))
+    ) |>
     dplyr::distinct() |>
     tidyr::unnest(date) |>
     dplyr::left_join(weather_data_j, by = "date") |>
     tidyr::drop_na(c(min_temp, max_temp, total_precip)) |>
-    dplyr::select(any_of(c({{id_col}}, {{date_semi}}, nochamp, annee, date, min_temp, max_temp, total_precip, globalrad)))
+    dplyr::select(any_of(c({{ id_col }}, {{ date_semi }}, nochamp, annee, date, min_temp, max_temp, total_precip, globalrad)))
 
   # Du semis à la récolte
   calendrier_recolte <- data |>
@@ -81,7 +83,7 @@ calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_
 #' @export
 #'
 #' @examples
-calendrier_climatique_horaire <- function(data, weather_data_h, id_col, date_semi = date_semi){
+calendrier_climatique_horaire <- function(data, weather_data_h, id_col, date_semi = date_semi) {
   calendrier_h_semis <- data |>
     dplyr::select(any_of(c({{ id_col }}, {{ date_semi }}, nochamp, annee))) |>
     # On cale les timezones sur les mêmes que les données météo! Sinon décalage de 4h
@@ -108,12 +110,12 @@ calendrier_climatique_horaire <- function(data, weather_data_h, id_col, date_sem
 #' @export
 #'
 #' @examples
-utm <- function(min_temp, max_temp){
+utm <- function(min_temp, max_temp) {
   tmax_m10 <- pmax(max_temp - 10, 0)
   tmin_m444 <- pmax(min_temp - 4.44, 0)
   ymax <- 3.33 * tmax_m10 - 0.084 * (tmax_m10^2)
   ymin <- 1.8 * tmin_m444
-  return((ymax + ymin)*0.5)
+  return((ymax + ymin) * 0.5)
 }
 
 # Calcul des degrés jour
@@ -128,11 +130,11 @@ utm <- function(min_temp, max_temp){
 #' @export
 #'
 #' @examples
-gdd <- function(min_temp, max_temp, tbase = 5, tlim = 32){
+gdd <- function(min_temp, max_temp, tbase = 5, tlim = 32) {
   tmin <- pmax(min_temp, 0)
   tmax <- pmax(max_temp, 0)
-  tmean <- (tmax + tmin)/2
-  return(ifelse (tmean < tbase | tmax > tlim, 0, tmean - tbase))
+  tmean <- (tmax + tmin) / 2
+  return(ifelse(tmean < tbase | tmax > tlim, 0, tmean - tbase))
 }
 
 #' Cummul des UTM
@@ -159,7 +161,7 @@ gdd <- function(min_temp, max_temp, tbase = 5, tlim = 32){
 #' @export
 #'
 #' @examples
-utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, thresh){
+utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, thresh) {
   utm_recolte <- calendrier |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::mutate(utm = utm(min_temp = min_temp, max_temp = max_temp) |> purrr::accumulate(`+`)) |>
@@ -205,7 +207,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, thresh
 #' @export
 #'
 #' @examples
-gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase, tlim, jour_maturite){
+gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase, tlim, jour_maturite) {
   gdd_90 <- calendrier |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::mutate(gdd = gdd(min_temp = {{ min_temp }}, max_temp = {{ max_temp }}, tbase = {{ tbase }}, tlim = {{ tlim }}) |> purrr::accumulate(`+`)) |>
@@ -237,9 +239,9 @@ gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase,
 #' @export
 #'
 #' @examples
-rad_cummul <- function(calendrier, id_col, date_semi){
+rad_cummul <- function(calendrier, id_col, date_semi) {
   rad_recolte <- calendrier |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(total_rad = sum(globalrad))
 }
 
@@ -261,17 +263,17 @@ rad_cummul <- function(calendrier, id_col, date_semi){
 #' @export
 #'
 #' @examples
-precipitation <- function(calendrier, id_col, date_semi){
+precipitation <- function(calendrier, id_col, date_semi) {
   pr_7j <- calendrier$Presemis_7j |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(total_precip_7j = sum(total_precip))
   ## 14 après le semis
   pr_14j <- calendrier$Postsemis_14j |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(total_precip_14j = sum(total_precip))
   ## À la récolte
   pr_recolte <- calendrier$Recolte |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(total_precip = sum(total_precip))
   return(list("Presemis_7j" = pr_7j, "Postsemis_14j" = pr_14j, "Recolte" = pr_recolte))
 }
@@ -300,32 +302,35 @@ precipitation <- function(calendrier, id_col, date_semi){
 #' @export
 #'
 #' @examples
-frequence_gel <- function(calendrier_horaire, id_col, date_semi, thresh, span){
+frequence_gel <- function(calendrier_horaire, id_col, date_semi, thresh, span) {
   nb_gel <- calendrier_horaire |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
-    dplyr::mutate(cold = temp < thresh,
-                  #
-                  gap_h = as.numeric(difftime(time, dplyr::lag(time), units = "hours")),
-                  new_block = dplyr::case_when(
-                    # Première ligne du groupe et si temp < seuil
-                    dplyr::row_number() == 1 ~ T,
-                    # Si précédent Non NA et temp >= seuil, et actuel cold
-                    !dplyr::lag(cold) & cold ~ TRUE,
-                    # Si précédent Non NA et temp < seuil et actuel cold
-                    dplyr::lag(cold) & cold ~ FALSE,
-                    # Si précédent Non NA cold et actuel non cold
-                    dplyr::lag(cold) & !cold ~ TRUE,
-                    # Deux heures où temp < seuil mais séparées par NA
-                    dplyr::lag(cold) & cold & !is.na(gap_h) & gap_h > 2 ~ TRUE,
-                    # Si gap > 2h, trop d'incertitude
-                    is.na(dplyr::lag(temp)) & cold & !is.na(gap_h) & gap_h > 2 ~ TRUE,
-                    TRUE ~ FALSE),
-                  new_block = tidyr::replace_na(new_block, FALSE),
-                  block_id = cumsum(new_block)) |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee, block_id) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
+    dplyr::mutate(
+      cold = temp < thresh,
+      #
+      gap_h = as.numeric(difftime(time, dplyr::lag(time), units = "hours")),
+      new_block = dplyr::case_when(
+        # Première ligne du groupe et si temp < seuil
+        dplyr::row_number() == 1 ~ T,
+        # Si précédent Non NA et temp >= seuil, et actuel cold
+        !dplyr::lag(cold) & cold ~ TRUE,
+        # Si précédent Non NA et temp < seuil et actuel cold
+        dplyr::lag(cold) & cold ~ FALSE,
+        # Si précédent Non NA cold et actuel non cold
+        dplyr::lag(cold) & !cold ~ TRUE,
+        # Deux heures où temp < seuil mais séparées par NA
+        dplyr::lag(cold) & cold & !is.na(gap_h) & gap_h > 2 ~ TRUE,
+        # Si gap > 2h, trop d'incertitude
+        is.na(dplyr::lag(temp)) & cold & !is.na(gap_h) & gap_h > 2 ~ TRUE,
+        TRUE ~ FALSE
+      ),
+      new_block = tidyr::replace_na(new_block, FALSE),
+      block_id = cumsum(new_block)
+    ) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee, block_id) |>
     dplyr::summarise(cold = sum(cold, na.rm = T), .groups = "drop_last") |>
     dplyr::reframe(cold = cold >= span) |>
-    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(cold = sum(cold))
   return(nb_gel)
 }
