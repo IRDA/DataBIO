@@ -235,7 +235,7 @@ rad_cummul <- function(calendrier, id_col, date_semi){
 #'
 #' Cette fonction cumule les précipitations selon trois scénarios distincts. Une variable contenant les précipitations totales journalière `total_precip` doit absolument être incluse.
 #'
-#' @param calendrier Liste de calendriers climatiques journaliers. Cette fonction accepte le output de la fonction `calendrier_climatique_journalier}
+#' @param calendrier Liste de calendriers climatiques journaliers. Cette fonction accepte le output de la fonction `calendrier_climatique_journalier`
 #' @param id_col Variable d'identification des parcelles/unité de culture
 #' @param date_semi Variable de type `date` sous format `"%Y-%m-%d`
 #'
@@ -269,7 +269,7 @@ precipitation <- function(calendrier, id_col, date_semi){
 #' Cette fonction dénombre le nombre d'épisodes de gel pour chaque date de semis entre `date_semi` et `date_semi + 14`.
 #' Un épisode de gel est caractérisé par un seuil (`thresh`) et une durée d'exposition au seuil (`span`).
 #'
-#' @param calendrier_horaire Calendrier climatique horaire du semis à la récolte obtenu avec la fonction `calendrier_climatique_horaire}
+#' @param calendrier_horaire Calendrier climatique horaire du semis à la récolte obtenu avec la fonction `calendrier_climatique_horaire`
 #' @param id_col Variable d'identification des parcelles/unité de culture
 #' @param date_semi Variable de type `date` sous format `"%Y-%m-%d`
 #' @param thresh Température minimale de résistance au gel de la culture, variable par culture

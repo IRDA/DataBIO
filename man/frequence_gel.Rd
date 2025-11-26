@@ -7,6 +7,8 @@
 frequence_gel(calendrier_horaire, id_col, date_semi, thresh, span)
 }
 \arguments{
+\item{calendrier_horaire}{Calendrier climatique horaire du semis à la récolte obtenu avec la fonction \code{calendrier_climatique_horaire}}
+
 \item{id_col}{Variable d'identification des parcelles/unité de culture}
 
 \item{date_semi}{Variable de type \code{date} sous format \verb{"\%Y-\%m-\%d}}

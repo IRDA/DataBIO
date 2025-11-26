@@ -7,6 +7,8 @@
 precipitation(calendrier, id_col, date_semi)
 }
 \arguments{
+\item{calendrier}{Liste de calendriers climatiques journaliers. Cette fonction accepte le output de la fonction \code{calendrier_climatique_journalier}}
+
 \item{id_col}{Variable d'identification des parcelles/unité de culture}
 
 \item{date_semi}{Variable de type \code{date} sous format \verb{"\%Y-\%m-\%d}}
