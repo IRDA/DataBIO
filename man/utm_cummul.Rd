@@ -4,7 +4,7 @@
 \alias{utm_cummul}
 \title{Cummul des UTM}
 \usage{
-utm_cummul(calendrier, id_col, date_semi, min_temp, max_temp, thresh)
+utm_cummul(calendrier, id_col, date_semi, min_temp, max_temp)
 }
 \arguments{
 \item{calendrier}{Calendrier climatique journalier du semis à la récolte}
@@ -16,8 +16,6 @@ utm_cummul(calendrier, id_col, date_semi, min_temp, max_temp, thresh)
 \item{min_temp}{Variable contenant la température minimale journalière}
 
 \item{max_temp}{Variable contenant la température maximale journalière}
-
-\item{thresh}{Seuil d'UTM où la maturité physiologique est atteinte, variable par culture}
 }
 \value{
 Un \code{dataframe} contenant:
@@ -26,8 +24,7 @@ Un \code{dataframe} contenant:
 \item{date_semi}{Variable de type \code{date} sous format \verb{"\%Y-\%m-\%d}}
 \item{nochamp}{Variable d'identification des champs}
 \item{annee}{Variable d'identification de l'année}
-\item{utm_atteint}{Nombre d'UTM atteints au jour où le seuil est dépassé. Retourne \code{NA_real_} lorsque le seuil n'est pas atteint à la récolte.}
-\item{nb_jour_utm}{Nombre de jours de croissance pour que le seuil soit obtenu. Retourne \code{NA_real_} lorsque le seuil n'est pas atteint à la récolte.}
+\item{utm_atteint}{Nombre d'UTM atteints à la récolte.}
 }
 }
 \description{

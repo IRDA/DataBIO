@@ -4,16 +4,7 @@
 \alias{gdd_cummul}
 \title{Cummul des degrés jour}
 \usage{
-gdd_cummul(
-  calendrier,
-  id_col,
-  date_semi,
-  min_temp,
-  max_temp,
-  tbase,
-  tlim,
-  jour_maturite
-)
+gdd_cummul(calendrier, id_col, date_semi, min_temp, max_temp, tbase, tlim)
 }
 \arguments{
 \item{calendrier}{Calendrier climatique journalier du semis à la récolte}
@@ -29,8 +20,6 @@ gdd_cummul(
 \item{tbase}{Température basale où l'accumulation des degrés jour commence, variable par culture}
 
 \item{tlim}{Température maximale où l'accumulation des degrés jour arrête, variable par culture}
-
-\item{jour_maturite}{Nombre de jours pour l'atteinte de la maturité physiologique (fiche technique de la variété)}
 }
 \value{
 Un \code{dataframe} contenant:
@@ -39,7 +28,7 @@ Un \code{dataframe} contenant:
 \item{date_semi}{Variable de type \code{date} sous format \verb{"\%Y-\%m-\%d}}
 \item{nochamp}{Variable d'identification des champs}
 \item{annee}{Variable d'identification de l'année}
-\item{gdd_atteint}{Nombre de degrés jours atteints au seuil de maturité physiologique. Retourne \code{NA_real_} lorsque le seuil n'est pas atteint à la récolte.}
+\item{gdd_atteint}{Nombre de degrés jours atteints à la récolte.}
 }
 }
 \description{
