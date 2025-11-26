@@ -24,29 +24,29 @@
 calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_semi = date_semi, date_recolte = date_recolte){
   # 7 jours pré-semis
   calendrier_7j_presemis <- data |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee)) |>
     dplyr::mutate(date_semi = as.Date({{date_semi}}),
                   date = purrr::map2(date_semi - 7, date_semi, ~ seq(.x, .y, by = "day"))) |>
     dplyr::distinct() |>
     tidyr::unnest(date) |>
     dplyr::left_join(weather_data_j, by = "date") |>
     tidyr::drop_na(c(min_temp, max_temp, total_precip)) |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee, date, min_temp, max_temp, total_precip)
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee, date, min_temp, max_temp, total_precip, globalrad))
 
   # 14 jours post-semis
   calendrier_14j <- data |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee)) |>
     dplyr::mutate(date_semi = as.Date({{date_semi}}),
                   date = purrr::map2(date_semi, date_semi + 14, ~ seq(.x, .y, by = "day"))) |>
     dplyr::distinct() |>
     tidyr::unnest(date) |>
     dplyr::left_join(weather_data_j, by = "date") |>
     tidyr::drop_na(c(min_temp, max_temp, total_precip)) |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee, date, min_temp, max_temp, total_precip)
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee, date, min_temp, max_temp, total_precip, globalrad))
 
   # Du semis à la récolte
   calendrier_recolte <- data |>
-    dplyr::select({{id_col}}, {{date_semi}}, {{date_recolte}}, nochamp, annee) |>
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, {{date_recolte}}, nochamp, annee)) |>
     dplyr::mutate(date_semi = as.Date({{date_semi}}),
                   date_recolte = as.Date({{date_recolte}}),
                   date = purrr::map2(date_semi, date_recolte - 1, ~ seq(.x, .y, by = "day"))) |>
@@ -54,7 +54,7 @@ calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_
     tidyr::unnest(date) |>
     dplyr::left_join(weather_data_j, by = "date") |>
     tidyr::drop_na(c(min_temp, max_temp, total_precip)) |>
-    dplyr::select({{id_col}}, date_semi, date_recolte, nochamp, annee, date, min_temp, max_temp, total_precip)
+    dplyr::select(any_of({{id_col}}, date_semi, date_recolte, nochamp, annee, date, min_temp, max_temp, total_precip, globalrad))
 
   return(list("Presemis_7j" = calendrier_7j_presemis, "Postsemis_14j" = calendrier_14j, "Recolte" = calendrier_recolte))
 }
@@ -79,7 +79,7 @@ calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_
 #' @examples
 calendrier_climatique_horaire <- function(data, weather_data_h, id_col, date_semi = date_semi){
   calendrier_h_semis <- data |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee)) |>
     # On cale les timezones sur les mêmes que les données météo! Sinon décalage de 4h
     dplyr::mutate(date_semi = as.POSIXct({{date_semi}}, tz = attr(weather_data_h$time, "tzone")),
                   date_semi_14 = as.POSIXct({{date_semi}} + days(14)),
@@ -87,7 +87,7 @@ calendrier_climatique_horaire <- function(data, weather_data_h, id_col, date_sem
     dplyr::distinct() |>
     tidyr::unnest(time) |>
     dplyr::left_join(weather_data_h) |>
-    dplyr::select({{id_col}}, date_semi, nochamp, annee, time, temp)
+    dplyr::select(any_of({{id_col}}, date_semi, nochamp, annee, time, temp))
   return(calendrier_h_semis)
 }
 
@@ -163,7 +163,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, thresh
                      .groups = "drop") |>
     dplyr::mutate(nb_jour_utm = case_when(!is.na(date_atteinte) ~ as.factor(date_atteinte - date_semi),
                                           TRUE ~ as.factor("Non atteint"))) |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee, utm_atteint, nb_jour_utm)
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee, utm_atteint, nb_jour_utm))
   return(utm_recolte)
 }
 
@@ -203,8 +203,32 @@ gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase,
                      date_atteinte = if (!is.na(idx)) date[idx] else as.Date(NA),
                      gdd_atteint = if (!is.na(idx)) gdd[idx] else NA_real_,
                      .groups = "drop") |>
-    dplyr::select({{id_col}}, {{date_semi}}, nochamp, annee, gdd_atteint)
+    dplyr::select(any_of({{id_col}}, {{date_semi}}, nochamp, annee, gdd_atteint))
   return(gdd_90)
+}
+
+#' Cummul de la radiation solaire
+#'
+#' @param calendrier Calendrier climatique journalier du semis à la récolte
+#' @param id_col Variable d'identification des parcelles/unité de culture
+#' @param date_semi Variable de type `date` sous format `"%Y-%m-%d`
+#'
+#' @returns Un `dataframe` contenant:
+#'    \describe{
+#'      \item{id_cols}{Variable d'identification des parcelles/unité de culture}
+#'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
+#'      \item{nochamp}{Variable d'identification des champs}
+#'      \item{annee}{Variable d'identification de l'année}
+#'      \item{globalrad}{Somme de la radiation globale, unités variables selon la source des données.}
+#'    }
+#' @importFrom dplyr group_by summarise
+#' @export
+#'
+#' @examples
+rad_cummul <- function(calendrier, id_col, date_semi){
+  rad_recolte <- calendrier |>
+    dplyr::group_by({{id_col}}, {{date_semi}}, nochamp, annee) |>
+    dplyr::summarise(total_rad = sum(globalrad))
 }
 
 #' Cummul des précipitation
