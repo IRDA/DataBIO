@@ -160,7 +160,7 @@ gdd <- function(min_temp, max_temp, tbase = 5, tlim = 32) {
 #'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
-#'      \item{utm_atteint}{Nombre d'UTM atteints à la récolte.}
+#'      \item{unite_chaleur_atteint}{Nombre d'UTM atteints à la récolte.}
 #'    }
 #' @importFrom dplyr group_by mutate summarise select
 #' @export
@@ -173,7 +173,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp) { #, t
   utm_recolte <- calendrier |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::mutate(utm = utm(min_temp = {{ min_temp }}, max_temp = {{ max_temp }})) |> #purrr::accumulate(`+`)) |>
-    summarise(utm_atteint = sum(utm)) |>
+    summarise(unite_chaleur_atteint = sum(utm)) |>
     # dplyr::summarise(
     #   idx = which(utm >= thresh)[1],
     #   date_atteinte = if (!is.na(idx)) date[idx] else as.Date(NA),
@@ -184,7 +184,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp) { #, t
     #   !is.na(date_atteinte) ~ as.factor(date_atteinte - date_semi),
     #   TRUE ~ as.factor("Non atteint")
     # )) |>
-    dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee", "utm_atteint")))
+    dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee", "unite_chaleur_atteint")))
   return(utm_recolte)
 }
 
@@ -208,7 +208,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp) { #, t
 #'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
-#'      \item{gdd_atteint}{Nombre de degrés jours atteints à la récolte.}
+#'      \item{unite_chaleur_atteint}{Nombre de degrés jours atteints à la récolte.}
 #'    }
 #' @importFrom dplyr group_by mutate summarise select
 #' @importFrom purrr accumulate
@@ -222,14 +222,14 @@ gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase,
   gdd_90 <- calendrier |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::mutate(gdd = gdd(min_temp = {{ min_temp }}, max_temp = {{ max_temp }}, tbase = {{ tbase }}, tlim = {{ tlim }})) |> #purrr::accumulate(`+`)) |>
-    summarise(gdd_atteint = sum(gdd)) |>
+    summarise(unite_chaleur_atteint = sum(gdd)) |>
     # dplyr::summarise(
     #   idx = which(date >= {{ date_semi }} + jour_maturite)[1],
     #   date_atteinte = if (!is.na(idx)) date[idx] else as.Date(NA),
     #   gdd_atteint = if (!is.na(idx)) gdd[idx] else NA_real_,
     #   .groups = "drop"
     # ) |>
-    dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee", "gdd_atteint")))
+    dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee", "unite_chaleur_atteint")))
   return(gdd_90)
 }
 

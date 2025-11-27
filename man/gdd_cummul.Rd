@@ -28,7 +28,7 @@ Un \code{dataframe} contenant:
 \item{date_semi}{Variable de type \code{date} sous format \verb{"\%Y-\%m-\%d}}
 \item{nochamp}{Variable d'identification des champs}
 \item{annee}{Variable d'identification de l'année}
-\item{gdd_atteint}{Nombre de degrés jours atteints à la récolte.}
+\item{unite_chaleur_atteint}{Nombre de degrés jours atteints à la récolte.}
 }
 }
 \description{
