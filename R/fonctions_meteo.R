@@ -156,7 +156,7 @@ gdd <- function(min_temp, max_temp, tbase = 5, tlim = 32) {
 #'
 #' @returns Un `dataframe` contenant:
 #'    \describe{
-#'      \item{id_cols}{Variable d'identification des parcelles/unité de culture}
+#'      \item{id_col}{Variable d'identification des parcelles/unité de culture}
 #'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
@@ -204,7 +204,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp) { #, t
 #'
 #' @returns Un `dataframe` contenant:
 #'    \describe{
-#'      \item{id_cols}{Variable d'identification des parcelles/unité de culture}
+#'      \item{id_col}{Variable d'identification des parcelles/unité de culture}
 #'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
@@ -241,7 +241,7 @@ gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase,
 #'
 #' @returns Un `dataframe` contenant:
 #'    \describe{
-#'      \item{id_cols}{Variable d'identification des parcelles/unité de culture}
+#'      \item{id_col}{Variable d'identification des parcelles/unité de culture}
 #'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
@@ -294,9 +294,9 @@ precipitation <- function(calendrier, id_col, date_semi) {
 #' Fréquence des épisodes de gel
 #'
 #' Cette fonction dénombre le nombre d'épisodes de gel pour chaque date de semis entre `date_semi` et `date_semi + 14`.
-#' Un épisode de gel est caractérisé par un seuil (`thresh`) et une durée d'exposition au seuil (`span`).
+#' Un épisode de gel est caractérisé par un seuil (`thresh`) et une durée d'exposition au seuil (`span`) en heures.
 #'
-#' @param calendrier_horaire Calendrier climatique horaire du semis à la récolte obtenu avec la fonction `calendrier_climatique_horaire`
+#' @param calendrier_horaire Calendrier climatique horaire du semis à deux semaines plus tard obtenu avec la fonction `calendrier_climatique_horaire`
 #' @param id_col Variable d'identification des parcelles/unité de culture
 #' @param date_semi Variable de type `date` sous format `"%Y-%m-%d`
 #' @param thresh Température minimale de résistance au gel de la culture, variable par culture
@@ -304,7 +304,7 @@ precipitation <- function(calendrier, id_col, date_semi) {
 #'
 #' @returns Un `dataframe` contenant:
 #'    \describe{
-#'      \item{id_cols}{Variable d'identification des parcelles/unité de culture}
+#'      \item{id_col}{Variable d'identification des parcelles/unité de culture}
 #'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
@@ -315,7 +315,7 @@ precipitation <- function(calendrier, id_col, date_semi) {
 #' @export
 #'
 #' @examples
-frequence_gel <- function(calendrier_horaire, id_col, date_semi, thresh, span) {
+frequence_gel_h <- function(calendrier_horaire, id_col, date_semi, thresh, span) {
   nb_gel <- calendrier_horaire |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::mutate(
@@ -345,5 +345,36 @@ frequence_gel <- function(calendrier_horaire, id_col, date_semi, thresh, span) {
     dplyr::reframe(cold = cold >= span) |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(cold = sum(cold))
+  return(nb_gel)
+}
+
+#' Fréquence des épisodes de gel
+#'
+#' Cette fonction dénombre le nombre d'épisodes de gel pour chaque date de semis entre `date_semi` et `date_semi + 14`.
+#' Un épisode de gel est caractérisé par une température minimale journalière sous un seuil (`thresh`).
+#'
+#' @param calendrier Calendrier climatique journalier obtenu avec la fonction `calendrier_climatique_journalier`. La période d'intérêt est données par `Postsemis_14j`.
+#' @param id_col Variable d'identification des parcelles/unité de culture
+#' @param date_semi Variable de type `date` sous format `"%Y-%m-%d`
+#' @param thresh Température minimale de résistance au gel de la culture, variable par culture
+#'
+#' @returns Un `dataframe` contenant:
+#'    \describe{
+#'      \item{id_col}{Variable d'identification des parcelles/unité de culture}
+#'      \item{date_semi}{Variable de type `date` sous format `"%Y-%m-%d`}
+#'      \item{nochamp}{Variable d'identification des champs}
+#'      \item{annee}{Variable d'identification de l'année}
+#'      \item{cold}{Nombre d'épisodes de gel entre `date_semi` et `date_semi + 14`. Retourne 0 lorsque qu'aucun épisode de gel n'a été enregistré.}
+#' @importFrom dplyr group_by mutate summarise
+#' @export
+#'
+#' @examples
+frequence_gel <- function(calendrier, id_col, date_semi, thresh){
+  nb_gel <- calendrier |>
+    dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
+    # Cold est TRUE ou FALSE si min_temp est sous thresh
+    dplyr::mutate(cold = min_temp < thresh) |>
+    # Somme des TRUE
+    dplyr::summarise(cold = sum(cold, na.rm = T))
   return(nb_gel)
 }

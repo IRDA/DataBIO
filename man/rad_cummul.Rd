@@ -16,7 +16,7 @@ rad_cummul(calendrier, id_col, date_semi)
 \value{
 Un \code{dataframe} contenant:
 \describe{
-\item{id_cols}{Variable d'identification des parcelles/unité de culture}
+\item{id_col}{Variable d'identification des parcelles/unité de culture}
 \item{date_semi}{Variable de type \code{date} sous format \verb{"\%Y-\%m-\%d}}
 \item{nochamp}{Variable d'identification des champs}
 \item{annee}{Variable d'identification de l'année}
