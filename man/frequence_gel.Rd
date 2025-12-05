@@ -24,6 +24,7 @@ Un \code{dataframe} contenant:
 \item{annee}{Variable d'identification de l'année}
 \item{cold}{Nombre d'épisodes de gel entre \code{date_semi} et \code{date_semi + 14}. Retourne 0 lorsque qu'aucun épisode de gel n'a été enregistré.}
 }
+}
 \description{
 Cette fonction dénombre le nombre d'épisodes de gel pour chaque date de semis entre \code{date_semi} et \code{date_semi + 14}.
 Un épisode de gel est caractérisé par une température minimale journalière sous un seuil (\code{thresh}).
