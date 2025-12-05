@@ -365,6 +365,7 @@ frequence_gel_h <- function(calendrier_horaire, id_col, date_semi, thresh, span)
 #'      \item{nochamp}{Variable d'identification des champs}
 #'      \item{annee}{Variable d'identification de l'année}
 #'      \item{cold}{Nombre d'épisodes de gel entre `date_semi` et `date_semi + 14`. Retourne 0 lorsque qu'aucun épisode de gel n'a été enregistré.}
+#'      }
 #' @importFrom dplyr group_by mutate summarise
 #' @export
 #'
