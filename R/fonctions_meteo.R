@@ -166,7 +166,7 @@ gdd <- function(min_temp, max_temp, tbase = 5, tlim = 32) {
 #' @export
 #'
 #' @examples
-utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp) { #, thresh) {
+utm_cummul <- function(calendrier, id_col, date_semi = date_semi, min_temp, max_temp) { #, thresh) {
   id_col_chr <- rlang::as_name(rlang::enquo(id_col))
   date_semi_chr <- rlang::as_name(rlang::enquo(date_semi))
 
@@ -215,7 +215,7 @@ utm_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp) { #, t
 #' @export
 #'
 #' @examples
-gdd_cummul <- function(calendrier, id_col, date_semi, min_temp, max_temp, tbase, tlim){ #, jour_maturite) {
+gdd_cummul <- function(calendrier, id_col, date_semi = date_semi, min_temp, max_temp, tbase, tlim){ #, jour_maturite) {
   id_col_chr <- rlang::as_name(rlang::enquo(id_col))
   date_semi_chr <- rlang::as_name(rlang::enquo(date_semi))
 
@@ -276,7 +276,7 @@ rad_cummul <- function(calendrier, id_col, date_semi) {
 #' @export
 #'
 #' @examples
-precipitation <- function(calendrier, id_col, date_semi) {
+precipitation <- function(calendrier, id_col, date_semi = date_semi) {
   pr_7j <- calendrier$Presemis_7j |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::summarise(total_precip_7j = sum(total_precip))
@@ -315,7 +315,7 @@ precipitation <- function(calendrier, id_col, date_semi) {
 #' @export
 #'
 #' @examples
-frequence_gel_h <- function(calendrier_horaire, id_col, date_semi, thresh, span) {
+frequence_gel_h <- function(calendrier_horaire, id_col, date_semi = date_semi, thresh, span) {
   nb_gel <- calendrier_horaire |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     dplyr::mutate(
@@ -370,7 +370,7 @@ frequence_gel_h <- function(calendrier_horaire, id_col, date_semi, thresh, span)
 #' @export
 #'
 #' @examples
-frequence_gel <- function(calendrier, id_col, date_semi, thresh){
+frequence_gel <- function(calendrier, id_col, date_semi = date_semi, thresh){
   nb_gel <- calendrier |>
     dplyr::group_by({{ id_col }}, {{ date_semi }}, nochamp, annee) |>
     # Cold est TRUE ou FALSE si min_temp est sous thresh
