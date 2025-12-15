@@ -69,6 +69,45 @@ calendrier_climatique_journalier <- function(data, weather_data_j, id_col, date_
   return(list("Presemis_7j" = calendrier_7j_presemis, "Postsemis_14j" = calendrier_14j, "Recolte" = calendrier_recolte))
 }
 
+#' Calendrier climatique journalier custom
+#'
+#' Transforme un ensemble de dates de semis et de récolte en un calendrier climatique pour l'intervalle de chaque combinaison de dates.
+#' Chaque combinaison de dates est étendue par incrément d'une journée où les données climatiques journalières y sont jointes, et ce, pour trois scénarios distincts.
+#'
+#' @param data Données de rendement contenant au moins une colonne d’identification des parcelles, une date de semi, un numéro de champ et une année. L'année peut être extraite de la date de semi.
+#' @param weather_data_j Données climatiques journalières contenant au moins la température minimale et maximale et les précipitations totales.
+#' @param id_col Variable d'identification des parcelles/unité de culture
+#' @param date_semi Variable de type `date` sous format `"%Y-%m-%d`.
+#' @param date_recolte Variable de type `date` sous format `"%Y-%m-%d`.
+#' @param nb_jour Nombre de jours depuis la date de semis.
+#'
+#' @returns Un `dataframe` contenant le calendrier climatique de date -> date + nb_jour pour chaque date de semis.
+#' @importFrom dplyr select left_join mutate distinct
+#' @importFrom tidyr unnest drop_na
+#' @importFrom purrr map2
+#' @export
+#'
+#' @examples
+calendrier_climatique_custom <- function(data, weather_data_j, id_col, date_semi = date_semi, date_recolte = date_recolte, nb_jour) {
+  id_col_chr <- rlang::as_name(rlang::enquo(id_col))
+  date_semi_chr <- rlang::as_name(rlang::enquo(date_semi))
+  date_recolte_chr <- rlang::as_name(rlang::enquo(date_recolte))
+
+  # 7 jours pré-semis
+  calendrier_custom <- data |>
+    dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee"))) |>
+    dplyr::mutate(
+      date_semi = as.Date({{ date_semi }}),
+      date = purrr::map2(date_semi + {{ nb_jour }}, date_semi, ~ seq(.x, .y, by = "day"))
+    ) |>
+    dplyr::distinct() |>
+    tidyr::unnest(date) |>
+    dplyr::left_join(weather_data_j, by = "date") |>
+    tidyr::drop_na(c(min_temp, max_temp, total_precip)) |>
+    dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee", "date", "min_temp", "max_temp", "total_precip", "globalrad")))
+  return(calendrier_custom)
+}
+
 #' Calendrier climatique horaire
 #'
 #' Transforme un ensemble de dates de semis en un calendrier climatique.

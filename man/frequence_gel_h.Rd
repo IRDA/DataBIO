@@ -4,7 +4,13 @@
 \alias{frequence_gel_h}
 \title{Fréquence des épisodes de gel}
 \usage{
-frequence_gel_h(calendrier_horaire, id_col, date_semi, thresh, span)
+frequence_gel_h(
+  calendrier_horaire,
+  id_col,
+  date_semi = date_semi,
+  thresh,
+  span
+)
 }
 \arguments{
 \item{calendrier_horaire}{Calendrier climatique horaire du semis à deux semaines plus tard obtenu avec la fonction \code{calendrier_climatique_horaire}}

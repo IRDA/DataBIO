@@ -4,7 +4,7 @@
 \alias{precipitation}
 \title{Cummul des précipitation}
 \usage{
-precipitation(calendrier, id_col, date_semi)
+precipitation(calendrier, id_col, date_semi = date_semi)
 }
 \arguments{
 \item{calendrier}{Liste de calendriers climatiques journaliers. Cette fonction accepte le output de la fonction \code{calendrier_climatique_journalier}}

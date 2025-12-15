@@ -4,7 +4,7 @@
 \alias{utm_cummul}
 \title{Cummul des UTM}
 \usage{
-utm_cummul(calendrier, id_col, date_semi, min_temp, max_temp)
+utm_cummul(calendrier, id_col, date_semi = date_semi, min_temp, max_temp)
 }
 \arguments{
 \item{calendrier}{Calendrier climatique journalier du semis à la récolte}

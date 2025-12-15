@@ -4,7 +4,15 @@
 \alias{gdd_cummul}
 \title{Cummul des degrés jour}
 \usage{
-gdd_cummul(calendrier, id_col, date_semi, min_temp, max_temp, tbase, tlim)
+gdd_cummul(
+  calendrier,
+  id_col,
+  date_semi = date_semi,
+  min_temp,
+  max_temp,
+  tbase,
+  tlim
+)
 }
 \arguments{
 \item{calendrier}{Calendrier climatique journalier du semis à la récolte}

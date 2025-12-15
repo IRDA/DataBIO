@@ -4,7 +4,7 @@
 \alias{frequence_gel}
 \title{Fréquence des épisodes de gel}
 \usage{
-frequence_gel(calendrier, id_col, date_semi, thresh)
+frequence_gel(calendrier, id_col, date_semi = date_semi, thresh)
 }
 \arguments{
 \item{calendrier}{Calendrier climatique journalier obtenu avec la fonction \code{calendrier_climatique_journalier}. La période d'intérêt est données par \code{Postsemis_14j}.}

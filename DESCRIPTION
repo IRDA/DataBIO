@@ -1,6 +1,6 @@
 Package: DataBIO
 Title: Valorisation Des Données Agricoles
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Zachary", "Bélisle", , "zachary.belisle@irda.qc.ca", role = c("aut", "cre"))
 Description: Collection de fonctions servants aux analyses du programme de recherche DataBIO.
