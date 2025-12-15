@@ -98,7 +98,7 @@ calendrier_climatique_custom <- function(data, weather_data_j, id_col, date_semi
     dplyr::select(any_of(c(id_col_chr, date_semi_chr, "nochamp", "annee"))) |>
     dplyr::mutate(
       date_semi = as.Date({{ date_semi }}),
-      date = purrr::map2(date_semi + {{ nb_jour }}, date_semi, ~ seq(.x, .y, by = "day"))
+      date = purrr::map2(date_semi, date_semi + {{ nb_jour }}, ~ seq(.x, .y, by = "day"))
     ) |>
     dplyr::distinct() |>
     tidyr::unnest(date) |>
